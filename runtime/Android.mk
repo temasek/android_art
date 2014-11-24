@@ -357,6 +357,7 @@ define build-libart
     LOCAL_MODULE := libartd
   endif
 
+  LOCAL_CLANG := true
   LOCAL_MODULE_TAGS := optional
   LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 
@@ -460,6 +461,7 @@ $$(ENUM_OPERATOR_OUT_GEN): $$(GENERATED_SRC_DIR)/%_operator_out.cc : $(LOCAL_PAT
       # produce meaningful name resolution.
       LOCAL_STRIP_MODULE := keep_symbols
     endif
+    LOCAL_CLANG := true
     include $$(BUILD_SHARED_LIBRARY)
   else # host
     include $$(BUILD_HOST_SHARED_LIBRARY)

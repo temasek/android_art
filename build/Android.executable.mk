@@ -19,7 +19,7 @@ include art/build/Android.common_build.mk
 ART_HOST_EXECUTABLES ?=
 ART_TARGET_EXECUTABLES ?=
 
-ART_EXECUTABLES_CFLAGS :=
+ART_EXECUTABLES_CFLAGS := -Wframe-larger-than=4096
 ifeq ($(ART_USE_PORTABLE_COMPILER),true)
   ART_EXECUTABLES_CFLAGS += -DART_USE_PORTABLE_COMPILER=1
 endif
@@ -66,6 +66,7 @@ define build-art-executable
   else #debug
     LOCAL_MODULE := $$(art_executable)d
   endif
+  LOCAL_CLANG := true
 
   LOCAL_CFLAGS := $(ART_EXECUTABLES_CFLAGS)
   # Mac OS linker doesn't understand --export-dynamic/--version-script.
@@ -101,6 +102,7 @@ define build-art-executable
     LOCAL_MODULE_TARGET_ARCH := $(ART_SUPPORTED_ARCH)
   endif
   LOCAL_MULTILIB := $$(art_multilib)
+  LOCAL_CFLAGS += -Wframe-larger-than=4096
 
   include external/libcxx/libcxx.mk
   ifeq ($$(art_target_or_host),target)

@@ -194,6 +194,7 @@ define build-libart-compiler
     LOCAL_SHARED_LIBRARIES += libartd
   endif
 
+  LOCAL_CLANG := true
   LOCAL_MODULE_TAGS := optional
   LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 
