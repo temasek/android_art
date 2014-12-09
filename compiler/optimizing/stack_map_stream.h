@@ -109,7 +109,7 @@ class StackMapStream : public ValueObject {
   }
 
   size_t ComputeStackMapSize() const {
-    return stack_maps_.Size() * (StackMap<T>::kFixedSize + StackMaskEncodingSize(stack_mask_max_));
+    return stack_maps_.Size() * StackMap<T>::ComputeAlignedStackMapSize(stack_mask_max_);
   }
 
   size_t ComputeDexRegisterMapSize() const {

@@ -65,6 +65,17 @@ static bool kIsVisualizerEnabled = false;
  */
 static const char* kStringFilter = "";
 
+// The stack map we generate must be 4-byte aligned on ARM. Since existing
+// maps are generated alongside these stack maps, we must also align them.
+static std::vector<uint8_t>& AlignVectorSize(std::vector<uint8_t>& vector) {
+  size_t size = vector.size();
+  size_t aligned_size = RoundUp(size, 4);
+  for (; size < aligned_size; ++size) {
+    vector.push_back(0);
+  }
+  return vector;
+}
+
 OptimizingCompiler::OptimizingCompiler(CompilerDriver* driver) : QuickCompiler(driver) {
   if (kIsVisualizerEnabled) {
     visualizer_output_.reset(new std::ofstream("art.cfg"));
@@ -173,9 +184,9 @@ CompiledMethod* OptimizingCompiler::TryCompile(const DexFile::CodeItem* code_ite
                             codegen->GetFrameSize(),
                             codegen->GetCoreSpillMask(),
                             0, /* FPR spill mask, unused */
-                            mapping_table,
-                            vmap_table,
-                            gc_map,
+                            AlignVectorSize(mapping_table),
+                            AlignVectorSize(vmap_table),
+                            AlignVectorSize(gc_map),
                             nullptr);
 }
 
