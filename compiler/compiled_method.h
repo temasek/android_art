@@ -144,8 +144,9 @@ class CompiledMethod : public CompiledCode {
     return fp_spill_mask_;
   }
 
-  std::vector<uint8_t> const* GetMappingTable() const {
-    return mapping_table_;
+  const std::vector<uint8_t>& GetMappingTable() const {
+    DCHECK(mapping_table_ != nullptr);
+    return *mapping_table_;
   }
 
   const std::vector<uint8_t>& GetVmapTable() const {
