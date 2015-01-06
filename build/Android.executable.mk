@@ -93,9 +93,6 @@ define build-art-executable
   endif
   LOCAL_MULTILIB := $$(art_multilib)
 
-  LOCAL_CC	:= $$(TARGET_TOOLCHAIN_ROOT)/../arm-linux-androideabi-4.8/bin/arm-linux-androideabi-gcc$$(HOST_EXECUTABLE_SUFFIX)
-  LOCAL_CXX	:= $$(TARGET_TOOLCHAIN_ROOT)/../arm-linux-androideabi-4.8/bin/arm-linux-androideabi-g++$$(HOST_EXECUTABLE_SUFFIX)
-
   include external/libcxx/libcxx.mk
   ifeq ($$(art_target_or_host),target)
     include $(BUILD_EXECUTABLE)
