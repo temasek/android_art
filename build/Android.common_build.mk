@@ -148,6 +148,7 @@ ART_C_INCLUDES := \
   frameworks/compile/mclinker/include
 
 art_cflags := \
+  -Ofast \
   -fno-rtti \
   -std=gnu++11 \
   -ggdb3 \
@@ -181,9 +182,6 @@ ifeq ($(ART_SEA_IR_MODE),true)
   art_cflags += -DART_SEA_IR_MODE=1
 endif
 
-art_non_debug_cflags := \
-  -O3
-
 art_host_non_debug_cflags := \
   $(art_non_debug_cflags)
 
@@ -201,7 +199,6 @@ ART_TARGET_CLANG_CFLAGS_arm64 += \
   -fno-vectorize
 
 art_debug_cflags := \
-  -O1 \
   -DDYNAMIC_ANNOTATIONS_ENABLED=1 \
   -UNDEBUG
 
