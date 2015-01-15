@@ -315,7 +315,7 @@ LIBART_ENUM_OPERATOR_OUT_HEADER_FILES := \
   thread_state.h \
   verifier/method_verifier.h
 
-LIBART_CFLAGS := -Ofast
+LIBART_CFLAGS :=
 ifeq ($(ART_USE_PORTABLE_COMPILER),true)
   LIBART_CFLAGS += -DART_USE_PORTABLE_COMPILER=1
 endif
