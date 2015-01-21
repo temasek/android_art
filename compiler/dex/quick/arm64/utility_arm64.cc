@@ -1259,7 +1259,9 @@ LIR* Arm64Mir2Lir::LoadBaseDispBody(RegStorage r_base, int displacement, RegStor
     // TODO: cleaner support for index/displacement registers?  Not a reference, but must match width.
     RegStorage r_scratch = AllocTempWide();
     LoadConstantWide(r_scratch, displacement);
-    load = LoadBaseIndexed(r_base, r_scratch, r_dest, 0, size);
+    load = LoadBaseIndexed(r_base, r_scratch,
+                           (size == kReference) ? As64BitReg(r_dest) : r_dest,
+                           0, size);
     FreeTemp(r_scratch);
   }
 
@@ -1350,7 +1352,9 @@ LIR* Arm64Mir2Lir::StoreBaseDispBody(RegStorage r_base, int displacement, RegSto
     // Use long sequence.
     RegStorage r_scratch = AllocTempWide();
     LoadConstantWide(r_scratch, displacement);
-    store = StoreBaseIndexed(r_base, r_scratch, r_src, 0, size);
+    store = StoreBaseIndexed(r_base, r_scratch,
+                             (size == kReference) ? As64BitReg(r_src) : r_src,
+                             0, size);
     FreeTemp(r_scratch);
   }
 
