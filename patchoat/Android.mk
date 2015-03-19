@@ -30,8 +30,8 @@ else
 endif
 
 ifeq ($(ART_BUILD_TARGET_NDEBUG),true)
-  $(eval $(call build-art-executable,patchoat,$(PATCHOAT_SRC_FILES),libcutils,art/compiler,target,ndebug,$(patchoat_arch)))
+  $(eval $(call build-art-executable,patchoat,$(PATCHOAT_SRC_FILES),libcutils,art/compiler,target,ndebug,$(patchoat_arch),libz))
 endif
 ifeq ($(ART_BUILD_TARGET_DEBUG),true)
-  $(eval $(call build-art-executable,patchoat,$(PATCHOAT_SRC_FILES),libcutils,art/compiler,target,debug,$(patchoat_arch)))
+  $(eval $(call build-art-executable,patchoat,$(PATCHOAT_SRC_FILES),libcutils,art/compiler,target,debug,$(patchoat_arch),libz))
 endif
