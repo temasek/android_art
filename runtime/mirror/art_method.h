@@ -330,6 +330,7 @@ class MANAGED ArtMethod FINAL : public Object {
   ALWAYS_INLINE void SetEntryPointFromQuickCompiledCodePtrSize(
       const void* entry_point_from_quick_compiled_code, size_t pointer_size)
       SHARED_LOCKS_REQUIRED(Locks::mutator_lock_) {
+    DCHECK(!IsXposedHookedMethod());
     SetFieldPtrWithSize<false, true, kVerifyFlags>(
         EntryPointFromQuickCompiledCodeOffset(pointer_size), entry_point_from_quick_compiled_code,
         pointer_size);
