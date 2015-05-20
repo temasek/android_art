@@ -1076,8 +1076,6 @@ static int dex2oat(int argc, char** argv) {
       include_patch_information = true;
     } else if (option == "--no-include-patch-information") {
       include_patch_information = false;
-    } else {
-      Usage("Unknown argument %s", option.data());
     }
   }
 
