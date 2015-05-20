@@ -1200,8 +1200,6 @@ static int patchoat(int argc, char **argv) {
       dump_timings = true;
     } else if (option == "--no-dump-timings") {
       dump_timings = false;
-    } else {
-      Usage("Unknown argument %s", option.data());
     }
   }
 

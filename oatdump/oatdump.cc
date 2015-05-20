@@ -1763,9 +1763,6 @@ static int oatdump(int argc, char** argv) {
       os = out.get();
     } else if (option.starts_with("--method-filter=")) {
       method_filter_ = option.substr(strlen("--method-filter=")).data();
-    } else {
-      fprintf(stderr, "Unknown argument %s\n", option.data());
-      usage();
     }
   }
 

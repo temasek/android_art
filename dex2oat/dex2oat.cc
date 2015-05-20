@@ -1131,8 +1131,6 @@ static int dex2oat(int argc, char** argv) {
       if (swap_fd < 0) {
         Usage("--swap-fd passed a negative value %d", swap_fd);
       }
-    } else {
-      Usage("Unknown argument %s", option.data());
     }
   }
 
