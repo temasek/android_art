@@ -3022,7 +3022,7 @@ extern "C" jint JNI_CreateJavaVM(JavaVM** p_vm, JNIEnv** p_env, void* vm_args) {
     JavaVMOption* option = &args->options[i];
     options.push_back(std::make_pair(std::string(option->optionString), option->extraInfo));
   }
-  bool ignore_unrecognized = args->ignoreUnrecognized;
+  bool ignore_unrecognized = true;
   if (!Runtime::Create(options, ignore_unrecognized)) {
     return JNI_ERR;
   }

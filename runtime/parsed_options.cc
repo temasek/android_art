@@ -628,45 +628,6 @@ bool ParsedOptions::Parse(const RuntimeOptions& options, bool ignore_unrecognize
       if (!ParseStringAfterChar(option, '=', &native_bridge_library_filename_)) {
         return false;
       }
-    } else if (StartsWith(option, "-ea") ||
-               StartsWith(option, "-da") ||
-               StartsWith(option, "-enableassertions") ||
-               StartsWith(option, "-disableassertions") ||
-               (option == "--runtime-arg") ||
-               (option == "-esa") ||
-               (option == "-dsa") ||
-               (option == "-enablesystemassertions") ||
-               (option == "-disablesystemassertions") ||
-               (option == "-Xrs") ||
-               StartsWith(option, "-Xint:") ||
-               StartsWith(option, "-Xdexopt:") ||
-               (option == "-Xnoquithandler") ||
-               StartsWith(option, "-Xjniopts:") ||
-               StartsWith(option, "-Xjnigreflimit:") ||
-               (option == "-Xgenregmap") ||
-               (option == "-Xnogenregmap") ||
-               StartsWith(option, "-Xverifyopt:") ||
-               (option == "-Xcheckdexsum") ||
-               (option == "-Xincludeselectedop") ||
-               StartsWith(option, "-Xjitop:") ||
-               (option == "-Xincludeselectedmethod") ||
-               StartsWith(option, "-Xjitthreshold:") ||
-               StartsWith(option, "-Xjitcodecachesize:") ||
-               (option == "-Xjitblocking") ||
-               StartsWith(option, "-Xjitmethod:") ||
-               StartsWith(option, "-Xjitclass:") ||
-               StartsWith(option, "-Xjitoffset:") ||
-               StartsWith(option, "-Xjitconfig:") ||
-               (option == "-Xjitcheckcg") ||
-               (option == "-Xjitverbose") ||
-               (option == "-Xjitprofile") ||
-               (option == "-Xjitdisableopt") ||
-               (option == "-Xjitsuspendpoll") ||
-               StartsWith(option, "-XX:mainThreadStackSize=")) {
-      // Ignored for backwards compatibility.
-    } else if (!ignore_unrecognized) {
-      Usage("Unrecognized option %s\n", option.c_str());
-      return false;
     }
   }
   // If not set, background collector type defaults to homogeneous compaction
