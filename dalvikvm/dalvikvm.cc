@@ -168,7 +168,6 @@ static int dalvikvm(int argc, char** argv) {
   init_args.version = JNI_VERSION_1_6;
   init_args.options = options.get();
   init_args.nOptions = curr_opt;
-  init_args.ignoreUnrecognized = JNI_FALSE;
 
   // Start the runtime. The current thread becomes the main thread.
   JavaVM* vm = NULL;
