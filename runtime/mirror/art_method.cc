@@ -378,20 +378,19 @@ void ArtMethod::UnregisterNative(Thread* self) {
 }
 
 void ArtMethod::EnableXposedHook(JNIEnv* env, jobject additional_info) {
-  if (IsXposedHookedMethod()) {
+  if (UNLIKELY(IsXposedHookedMethod())) {
     // Already hooked
     return;
-  } else if (IsXposedOriginalMethod()) {
+  } else if (UNLIKELY(IsXposedOriginalMethod())) {
     // This should never happen
-    XLOG(FATAL) << "You cannot hook the original method";
+    ThrowIllegalArgumentException(nullptr, StringPrintf("Cannot hook the method backup: %s", PrettyMethod(this).c_str()).c_str());
+    return;
   }
-
 
   ScopedObjectAccess soa(env);
 
   // Create a backup of the ArtMethod object
   ArtMethod* backup_method = down_cast<ArtMethod*>(Clone(soa.Self()));
-  // Set private flag to avoid virtual table lookups during invocation
   backup_method->SetAccessFlags(backup_method->GetAccessFlags() | kAccXposedOriginalMethod);
 
   // Create a Method/Constructor object for the backup ArtMethod object

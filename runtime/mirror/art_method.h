@@ -565,8 +565,9 @@ class MANAGED ArtMethod FINAL : public Object {
 
   void EnableXposedHook(JNIEnv* env, jobject additional_info) SHARED_LOCKS_REQUIRED(Locks::mutator_lock_);
 
-  XposedHookInfo* GetXposedHookInfo() SHARED_LOCKS_REQUIRED(Locks::mutator_lock_) {
-    return reinterpret_cast<XposedHookInfo*>(GetEntryPointFromJni());
+  const XposedHookInfo* GetXposedHookInfo() SHARED_LOCKS_REQUIRED(Locks::mutator_lock_) {
+    DCHECK(IsXposedHookedMethod());
+    return reinterpret_cast<const XposedHookInfo*>(GetEntryPointFromJni());
   }
 
   ArtMethod* GetXposedOriginalMethod() SHARED_LOCKS_REQUIRED(Locks::mutator_lock_) {
