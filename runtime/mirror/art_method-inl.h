@@ -478,6 +478,9 @@ inline const char* ArtMethod::GetName() {
 }
 
 inline const DexFile::CodeItem* ArtMethod::GetCodeItem() {
+  if (UNLIKELY(IsXposedHookedMethod())) {
+    return nullptr;
+  }
   mirror::ArtMethod* method = GetInterfaceMethodIfProxy();
   return method->GetDexFile()->GetCodeItem(method->GetCodeItemOffset());
 }
