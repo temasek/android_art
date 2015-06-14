@@ -168,6 +168,9 @@ void* Thread::CreateCallback(void* arg) {
     self->GetJniEnv()->DeleteGlobalRef(self->tlsPtr_.jpeer);
     self->tlsPtr_.jpeer = nullptr;
     self->SetThreadName(self->GetThreadName(soa)->ToModifiedUtf8().c_str());
+
+    mirror::ArtField* priorityField = soa.DecodeField(WellKnownClasses::java_lang_Thread_priority);
+    self->SetNativePriority(priorityField->GetInt(self->tlsPtr_.opeer));
     Dbg::PostThreadStart(self);
 
     // Invoke the 'run' method of our java.lang.Thread.
@@ -1558,6 +1561,9 @@ jobjectArray Thread::InternalStackTraceToStackTraceElementArray(
       line_number = -1;
       class_name_object.Assign(method->GetDeclaringClass()->GetName());
       // source_name_object intentionally left null for proxy methods
+      if (method->IsXposedHookedMethod()) {
+        source_name_object.Assign(mirror::String::AllocFromModifiedUtf8(soa.Self(), "<Xposed>"));
+      }
     } else {
       mirror::IntArray* pc_trace = down_cast<mirror::IntArray*>(method_trace->Get(depth));
       uint32_t dex_pc = pc_trace->Get(i);

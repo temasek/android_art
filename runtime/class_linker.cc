@@ -1229,6 +1229,10 @@ const OatFile* ClassLinker::FindOpenedOatFileFromOatLocation(const std::string& 
     const OatFile* oat_file = oat_files_[i];
     DCHECK(oat_file != nullptr);
     if (oat_file->GetLocation() == oat_location) {
+      if (oat_file->IsCreatedInZygote() && !Runtime::Current()->IsZygote() && oat_location.find("/system@") == std::string::npos) {
+        LOG(INFO) << "Ignoring oat file opened by Zygote: " << oat_location;
+        continue;
+      }
       return oat_file;
     }
   }
@@ -2384,7 +2388,7 @@ bool ClassLinker::FindOatMethodFor(mirror::ArtMethod* method, OatFile::OatMethod
   // method for direct methods (or virtual methods made direct).
   mirror::Class* declaring_class = method->GetDeclaringClass();
   size_t oat_method_index;
-  if (method->IsStatic() || method->IsDirect()) {
+  if (method->IsStatic() || method->IsDirect(true)) {
     // Simple case where the oat method index was stashed at load time.
     oat_method_index = method->GetMethodIndex();
   } else {
