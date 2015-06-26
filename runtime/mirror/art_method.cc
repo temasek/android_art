@@ -354,6 +354,10 @@ void ArtMethod::Invoke(Thread* self, uint32_t* args, uint32_t args_size, JValue*
 
 void ArtMethod::RegisterNative(Thread* self, const void* native_method, bool is_fast) {
   DCHECK(Thread::Current() == self);
+  if (UNLIKELY(IsXposedHookedMethod())) {
+    GetXposedOriginalMethod()->RegisterNative(self, native_method, is_fast);
+    return;
+  }
   CHECK(IsNative()) << PrettyMethod(this);
   CHECK(!IsFastNative()) << PrettyMethod(this);
   CHECK(native_method != NULL) << PrettyMethod(this);
@@ -364,31 +368,30 @@ void ArtMethod::RegisterNative(Thread* self, const void* native_method, bool is_
 }
 
 void ArtMethod::UnregisterNative(Thread* self) {
+  if (UNLIKELY(IsXposedHookedMethod())) {
+    GetXposedOriginalMethod()->UnregisterNative(self);
+    return;
+  }
   CHECK(IsNative() && !IsFastNative()) << PrettyMethod(this);
   // restore stub to lookup native pointer via dlsym
   RegisterNative(self, GetJniDlsymLookupStub(), false);
 }
 
 void ArtMethod::EnableXposedHook(JNIEnv* env, jobject additional_info) {
-  if (IsXposedHookedMethod()) {
+  if (UNLIKELY(IsXposedHookedMethod())) {
     // Already hooked
     return;
-  } else if (IsXposedOriginalMethod()) {
+  } else if (UNLIKELY(IsXposedOriginalMethod())) {
     // This should never happen
-    XLOG(FATAL) << "You cannot hook the original method";
-  } else if (IsNative()) {
-    // Hooking native methods should hopefully work fine, but needs testing
-    XLOG(INFO) << "Not hooking native method " << PrettyMethod(this);
+    ThrowIllegalArgumentException(nullptr, StringPrintf("Cannot hook the method backup: %s", PrettyMethod(this).c_str()).c_str());
     return;
   }
-
 
   ScopedObjectAccess soa(env);
 
   // Create a backup of the ArtMethod object
   ArtMethod* backup_method = down_cast<ArtMethod*>(Clone(soa.Self()));
-  // Set private flag to avoid virtual table lookups during invocation
-  backup_method->SetAccessFlags(backup_method->GetAccessFlags() | kAccPrivate | kAccXposedOriginalMethod);
+  backup_method->SetAccessFlags(backup_method->GetAccessFlags() | kAccXposedOriginalMethod);
 
   // Create a Method/Constructor object for the backup ArtMethod object
   jobject reflect_method;
