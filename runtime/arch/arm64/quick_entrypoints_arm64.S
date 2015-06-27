@@ -1060,6 +1060,8 @@ ENTRY art_quick_check_cast
     .cfi_adjust_cfa_offset -32
     ret
 
+    .cfi_adjust_cfa_offset 32         // Reset unwind info so following code unwinds.
+
 .Lthrow_class_cast_exception:
     // Restore
     ldp x0, x1, [sp]
