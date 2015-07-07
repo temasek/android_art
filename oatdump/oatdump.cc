@@ -1765,6 +1765,7 @@ static int oatdump(int argc, char** argv) {
       method_filter_ = option.substr(strlen("--method-filter=")).data();
     } else {
       fprintf(stderr, "Unknown argument %s\n", option.data());
+      usage();
     }
   }
 

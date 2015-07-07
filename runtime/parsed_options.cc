@@ -21,7 +21,6 @@
 #endif
 
 #include "base/stringpiece.h"
-#include "base/stringprintf.h"
 #include "debugger.h"
 #include "gc/heap.h"
 #include "monitor.h"
@@ -160,7 +159,8 @@ bool ParsedOptions::ParseXGcOption(const std::string& option) {
                (gc_option == "noverifycardtable")) {
       // Ignored for backwards compatibility.
     } else {
-      LOG(WARNING) << StringPrintf("Unknown -Xgc option %s\n", gc_option.c_str());
+      Usage("Unknown -Xgc option %s\n", gc_option.c_str());
+      return false;
     }
   }
   return true;
@@ -465,7 +465,8 @@ bool ParsedOptions::Parse(const RuntimeOptions& options, bool ignore_unrecognize
         if (collector_type != gc::kCollectorTypeNone) {
           background_collector_type_ = collector_type;
         } else {
-          LOG(WARNING) << StringPrintf("Unknown -XX:BackgroundGC option %s\n", substring.c_str());
+          Usage("Unknown -XX:BackgroundGC option %s\n", substring.c_str());
+          return false;
         }
       }
     } else if (option == "-XX:+DisableExplicitGC") {
@@ -501,7 +502,8 @@ bool ParsedOptions::Parse(const RuntimeOptions& options, bool ignore_unrecognize
         } else if (verbose_options[i] == "verifier") {
           gLogVerbosity.verifier = true;
         } else {
-          LOG(WARNING) << StringPrintf("Unknown -verbose option %s\n", verbose_options[i].c_str());
+          Usage("Unknown -verbose option %s\n", verbose_options[i].c_str());
+          return false;
         }
       }
     } else if (StartsWith(option, "-verbose-methods:")) {
@@ -619,7 +621,8 @@ bool ParsedOptions::Parse(const RuntimeOptions& options, bool ignore_unrecognize
       } else if (verify_mode == "remote" || verify_mode == "all") {
         verify_ = true;
       } else {
-        LOG(WARNING) << StringPrintf("Unknown -Xverify option %s\n", verify_mode.c_str());
+        Usage("Unknown -Xverify option %s\n", verify_mode.c_str());
+        return false;
       }
     } else if (StartsWith(option, "-XX:NativeBridge=")) {
       if (!ParseStringAfterChar(option, '=', &native_bridge_library_filename_)) {
@@ -662,7 +665,8 @@ bool ParsedOptions::Parse(const RuntimeOptions& options, bool ignore_unrecognize
                StartsWith(option, "-XX:mainThreadStackSize=")) {
       // Ignored for backwards compatibility.
     } else if (!ignore_unrecognized) {
-      LOG(WARNING) << StringPrintf("Unrecognized option %s\n", option.c_str());
+      Usage("Unrecognized option %s\n", option.c_str());
+      return false;
     }
   }
   // If not set, background collector type defaults to homogeneous compaction
