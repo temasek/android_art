@@ -35,4 +35,3 @@ endif
 ifeq ($(ART_BUILD_TARGET_DEBUG),true)
   $(eval $(call build-art-executable,patchoat,$(PATCHOAT_SRC_FILES),libcutils,art/compiler,target,debug,$(patchoat_arch),libz))
 endif
-
