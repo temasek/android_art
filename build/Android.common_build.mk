@@ -116,12 +116,12 @@ ifneq ($(WITHOUT_HOST_CLANG),true)
 endif
 
 # Clang on the target. Target builds use GCC by default.
-ART_TARGET_CLANG := true
-ART_TARGET_CLANG_arm := true
-ART_TARGET_CLANG_arm64 := true
-ART_TARGET_CLANG_mips := true
-ART_TARGET_CLANG_x86 := true
-ART_TARGET_CLANG_x86_64 := true
+ART_TARGET_CLANG :=
+ART_TARGET_CLANG_arm :=
+ART_TARGET_CLANG_arm64 :=
+ART_TARGET_CLANG_mips :=
+ART_TARGET_CLANG_x86 :=
+ART_TARGET_CLANG_x86_64 :=
 
 define set-target-local-clang-vars
     LOCAL_CLANG := $(ART_TARGET_CLANG)
