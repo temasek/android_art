@@ -352,7 +352,7 @@ MethodVerifier::MethodVerifier(const DexFile* dex_file, Handle<mirror::DexCache>
       need_precise_constants_(need_precise_constants),
       has_check_casts_(false),
       has_virtual_or_interface_invokes_(false),
-      verify_to_dump_(verify_to_dump) {
+      verify_to_dump_(verify_to_dump || Runtime::Current()->IsRecompiling()) {
   Runtime::Current()->AddMethodVerifier(this);
   DCHECK(class_def != nullptr);
 }
@@ -772,7 +772,7 @@ bool MethodVerifier::VerifyInstruction(const Instruction* inst, uint32_t code_of
       result = false;
       break;
   }
-  if (inst->GetVerifyIsRuntimeOnly() && Runtime::Current()->IsCompiler() && !Runtime::Current()->IsRecompiling() && !verify_to_dump_) {
+  if (inst->GetVerifyIsRuntimeOnly() && Runtime::Current()->IsCompiler() && !verify_to_dump_) {
     Fail(VERIFY_ERROR_BAD_CLASS_HARD) << "opcode only expected at runtime " << inst->Name();
     result = false;
   }
@@ -3383,7 +3383,14 @@ mirror::ArtMethod* MethodVerifier::VerifyInvokeVirtualQuickArgs(const Instructio
   mirror::ArtMethod* res_method = GetQuickInvokedMethod(inst, work_line_.get(),
                                                              is_range);
   if (res_method == nullptr) {
-    Fail(VERIFY_ERROR_BAD_CLASS_HARD) << "Cannot infer method from " << inst->Name();
+    if (((method_access_flags_ & kAccConstructor) != 0) && ((method_access_flags_ & kAccStatic) != 0)) {
+      // Class initializers are never compiled, but always interpreted.
+      // The interpreter might throw a NPE, so this error can be ignored.
+      LOG(WARNING) << "Cannot infer method from " << inst->Name()
+                   << " ignored in " << PrettyMethod(dex_method_idx_, *dex_file_, false);
+    } else {
+      Fail(VERIFY_ERROR_BAD_CLASS_HARD) << "Cannot infer method from " << inst->Name();
+    }
     return nullptr;
   }
   if (FailOrAbort(this, !res_method->IsDirect(), "Quick-invoked method is direct at ",
