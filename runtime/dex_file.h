@@ -895,9 +895,6 @@ class DexFile {
     return oat_file_;
   }
 
-  // Initializes the LG Almond encryption library, if available.
-  static void InitLGAlmond();
-
  private:
   // Opens a .dex file
   static const DexFile* OpenFile(int fd, const char* location, bool verify, std::string* error_msg);

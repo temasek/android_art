@@ -16,7 +16,6 @@
 
 #include "dex_file.h"
 
-#include <dlfcn.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
@@ -33,6 +32,7 @@
 #include "dex_file_verifier.h"
 #include "globals.h"
 #include "leb128.h"
+#include "lgalmond.h"
 #include "mirror/art_field-inl.h"
 #include "mirror/art_method-inl.h"
 #include "mirror/string.h"
@@ -323,35 +323,6 @@ bool DexFile::OpenFromZip(const ZipArchive& zip_archive, const std::string& loca
   }
 }
 
-typedef int (*Almond_IsDRMDexFn)(const void*, size_t);
-typedef int (*Almond_CopyDexToMemFn)(void*, size_t, size_t*, uint8_t*, uint8_t*);
-static const uint32_t kLGAlmondFormatDex = 1;
-static Almond_IsDRMDexFn Almond_IsDRMDex = nullptr;
-static Almond_CopyDexToMemFn Almond_CopyDexToMem = nullptr;
-
-void DexFile::InitLGAlmond() {
-  if (!OS::FileExists("/system/lib/liblgalmond.so")) {
-    return;
-  }
-
-  void* dlopen_handle = dlopen("liblgalmond.so", RTLD_NOW);
-  if (dlopen_handle == nullptr) {
-    LOG(ERROR) << "Could not load liblgalmond.so: " << dlerror();
-    return;
-  }
-
-  Almond_CopyDexToMem = reinterpret_cast<Almond_CopyDexToMemFn>(dlsym(dlopen_handle, "Almond_CopyDexToMem"));
-  if (Almond_CopyDexToMem == nullptr)  {
-    LOG(ERROR) << "Could not locate Almond_CopyDexToMem: " << dlerror();
-    return;
-  }
-
-  Almond_IsDRMDex = reinterpret_cast<Almond_IsDRMDexFn>(dlsym(dlopen_handle, "Almond_Is_DRMDex"));
-  if (Almond_IsDRMDex == nullptr)  {
-    LOG(ERROR) << "Could not locate Almond_Is_DRMDex: " << dlerror();
-    return;
-  }
-}
 
 const DexFile* DexFile::OpenMemory(const byte* base,
                                    size_t size,
@@ -362,15 +333,13 @@ const DexFile* DexFile::OpenMemory(const byte* base,
                                    std::string* error_msg) {
   CHECK_ALIGNED(base, 4);  // various dex file structures must be word aligned
 
-  if (Almond_IsDRMDex != nullptr && Almond_IsDRMDex(base, size) == kLGAlmondFormatDex) {
+  if (UNLIKELY(LGAlmond::IsEncryptedDex(base, size))) {
     if ((mem_map->GetProtect() & PROT_WRITE) == 0) {
       LOG(ERROR) << "Could not decrypt " << location << " because it's in read-only memory";
       return nullptr;
     }
 
-    uint8_t cid_hash[20];
-    uint8_t preload_id[20];
-    if (Almond_CopyDexToMem(const_cast<byte*>(base), size, &size, cid_hash, preload_id) != 0) {
+    if (!LGAlmond::DecryptDex(const_cast<byte*>(base), &size)) {
       LOG(ERROR) << "Failed to decrypt " << location << " with LG Almond";
       return nullptr;
     }
