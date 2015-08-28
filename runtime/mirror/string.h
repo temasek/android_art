@@ -73,8 +73,6 @@ class MANAGED String FINAL : public Object {
 
   uint16_t CharAt(int32_t index) SHARED_LOCKS_REQUIRED(Locks::mutator_lock_);
 
-  void clear() SHARED_LOCKS_REQUIRED(Locks::mutator_lock_);
-
   String* Intern() SHARED_LOCKS_REQUIRED(Locks::mutator_lock_);
 
   static String* AllocFromUtf16(Thread* self,
