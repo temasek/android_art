@@ -98,3 +98,9 @@ endif
 ifeq ($(ART_BUILD_TARGET_DEBUG),true)
   $(eval $(call build-libart-disassembler,target,debug))
 endif
+ifeq ($(ART_BUILD_HOST_NDEBUG),true)
+  $(eval $(call build-libart-disassembler,host,ndebug))
+endif
+ifeq ($(ART_BUILD_HOST_DEBUG),true)
+  $(eval $(call build-libart-disassembler,host,debug))
+endif

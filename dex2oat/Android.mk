@@ -35,3 +35,10 @@ endif
 ifeq ($(ART_BUILD_TARGET_DEBUG),true)
   $(eval $(call build-art-executable,dex2oat,$(DEX2OAT_SRC_FILES),libcutils libartd-compiler,art/compiler,target,debug,$(dex2oat_arch)))
 endif
+
+ifeq ($(ART_BUILD_HOST_NDEBUG),true)
+  $(eval $(call build-art-executable,dex2oat,$(DEX2OAT_SRC_FILES),libart-compiler,art/compiler,host,ndebug))
+endif
+ifeq ($(ART_BUILD_HOST_DEBUG),true)
+  $(eval $(call build-art-executable,dex2oat,$(DEX2OAT_SRC_FILES),libartd-compiler,art/compiler,host,debug))
+endif

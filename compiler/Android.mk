@@ -284,6 +284,12 @@ $$(ENUM_OPERATOR_OUT_GEN): $$(GENERATED_SRC_DIR)/%_operator_out.cc : $(LOCAL_PAT
 
 endef
 
+ifeq ($(ART_BUILD_HOST_NDEBUG),true)
+  $(eval $(call build-libart-compiler,host,ndebug))
+endif
+ifeq ($(ART_BUILD_HOST_DEBUG),true)
+  $(eval $(call build-libart-compiler,host,debug))
+endif
 ifeq ($(ART_BUILD_TARGET_NDEBUG),true)
   $(eval $(call build-libart-compiler,target,ndebug))
 endif
