@@ -72,13 +72,7 @@ ART_TARGET_CFLAGS :=
 
 # Host.
 ART_HOST_CLANG := false
-
-ifeq ($(HOST_OS),darwin)
-  # Local darwin gcc is ancient
-  WITHOUT_HOST_CLANG ?= false
-endif
-
-ifeq ($(WITHOUT_HOST_CLANG),false)
+ifneq ($(WITHOUT_HOST_CLANG),true)
   # By default, host builds use clang for better warnings.
   ART_HOST_CLANG := true
 endif
@@ -89,8 +83,7 @@ ART_TARGET_CLANG := $(USE_CLANG_PLATFORM_BUILD)
 else
 ART_TARGET_CLANG := false
 endif
-# b/25130937
-ART_TARGET_CLANG_arm := false
+ART_TARGET_CLANG_arm :=
 ART_TARGET_CLANG_arm64 :=
 ART_TARGET_CLANG_mips :=
 ART_TARGET_CLANG_mips64 :=
